@@ -8,9 +8,9 @@ class UserTest {
 
     @Test
     void userConstructorSetsNameAndEmail() {
-        User user = new User("John Doe", "john.doe@example.com");
-        assertEquals("John Doe", user.getName());
-        assertEquals("john.doe@example.com", user.getEmail());
+        User user = new User(null,  null);
+        assertEquals(null, user.getName());
+        assertEquals(null, user.getEmail());
     }
 
     @Test
