@@ -31,10 +31,26 @@ public class PetitionService {
         petitionRepository.saveOrUpdate(petition);
     }
 
-    public void signPetition(Long id, User user) {
-        Optional<Petition> petition = petitionRepository.findById(id);
-        if (petition.isPresent()) {
-            petitionRepository.signPetition(id, user);
+    public boolean signPetition(Long id, User user) {
+        Optional<Petition> petitionOptional = petitionRepository.findById(id);
+
+        if (petitionOptional.isEmpty()) {
+            return false; // Petition not found
         }
+
+        Petition petition = petitionOptional.get();
+
+        // Check if user with the same email already signed the petition
+        boolean userAlreadySigned = petition.getSignUsers().stream()
+                .anyMatch(existingUser -> existingUser.getEmail().equalsIgnoreCase(user.getEmail()));
+
+        if (userAlreadySigned) {
+            return false; // Email already exists
+        }
+
+        // Add user if not already signed
+        petition.getSignUsers().add(user);
+        petitionRepository.saveOrUpdate(petition);
+        return true;
     }
 }

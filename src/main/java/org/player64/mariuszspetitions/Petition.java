@@ -4,9 +4,9 @@ package org.player64.mariuszspetitions;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 
 @Setter
@@ -21,6 +21,8 @@ public class Petition {
     @Valid
     @NotNull(message = "User must not be null")
     private User createdBy;
+
+    @Valid
     private ArrayList<User> signUsers = new ArrayList<>();
 
     public Petition() {

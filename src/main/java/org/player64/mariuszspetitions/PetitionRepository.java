@@ -2,6 +2,7 @@ package org.player64.mariuszspetitions;
 
 import org.springframework.stereotype.Repository;
 
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +62,12 @@ public class PetitionRepository {
         return petitions.stream().filter(p -> p.getTitle().toLowerCase().startsWith(name.toLowerCase())).findFirst();
     }
 
-    public void signPetition(Long id, User signUser) {
+    public void signPetition(Long id, @Valid User signUser) {
         Optional<Petition> petition = findById(id);
-        petition.ifPresent(p -> p.getSignUsers().add(signUser));
+        petition.ifPresent(p -> {
+
+                p.getSignUsers().add(signUser);
+
+        });
     }
 }

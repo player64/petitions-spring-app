@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,13 +48,22 @@ public class PetitionController {
 
     @PostMapping("/sign/{id}")
     public ResponseEntity<Void> signPetition(@PathVariable Long id, @Valid @RequestBody User user) {
-        petitionService.signPetition(id, user);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        boolean success = petitionService.signPetition(id, user);
+
+        if (!success) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null); // Return 409 if email already exists or petition not found
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).build(); // Successful sign
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        return ResponseEntity.badRequest().body("Validation failed: " + ex.getBindingResult().toString());
+        StringBuilder errorMessage = new StringBuilder("Validation failed: ");
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errorMessage.append("Field ").append(error.getField()).append(" - ").append(error.getDefaultMessage()).append("; ")
+        );
+        return ResponseEntity.badRequest().body(errorMessage.toString());
     }
 }

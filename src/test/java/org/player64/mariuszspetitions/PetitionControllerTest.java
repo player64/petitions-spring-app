@@ -75,6 +75,23 @@ class PetitionControllerTest {
     }
 
     @Test
+    void createPetitionWithNoTitleFails() throws Exception {
+        String jsonContent = """
+                {
+                    "user": {
+                        "name": "User",
+                        "email": ""
+                    }
+                }
+                """;
+        mockMvc.perform(post("/petitions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest());
+        verify(petitionService, times(0)).createPetition(any(Petition.class));
+    }
+
+    @Test
     void createPetitionCallsServiceWithPetition() throws Exception {
         String jsonContent = """
                     {
@@ -105,5 +122,20 @@ class PetitionControllerTest {
                         .content(jsonContent))
                 .andExpect(status().isOk());
         verify(petitionService, times(1)).signPetition(eq(1L), any(User.class));
+    }
+
+    @Test
+    void signPetitionFailsWithInvalidEmail() throws Exception {
+        String jsonContent = """
+                    {
+                        "name": "New User",
+                        "email": "newexample.com"
+                    }
+                """;
+        mockMvc.perform(post("/petitions/sign/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest()); // Expect 400 due to validation error
+        verify(petitionService, times(0)).signPetition(anyLong(), any(User.class)); // Ensure service is not called
     }
 }
