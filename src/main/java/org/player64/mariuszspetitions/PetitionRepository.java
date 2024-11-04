@@ -62,12 +62,10 @@ public class PetitionRepository {
         return petitions.stream().filter(p -> p.getTitle().toLowerCase().startsWith(name.toLowerCase())).findFirst();
     }
 
-    public void signPetition(Long id, @Valid User signUser) {
+    public void signPetition(Long id, User signUser) {
         Optional<Petition> petition = findById(id);
         petition.ifPresent(p -> {
-
                 p.getSignUsers().add(signUser);
-
         });
     }
 }
