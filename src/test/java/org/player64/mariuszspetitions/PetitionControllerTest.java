@@ -114,7 +114,7 @@ class PetitionControllerTest {
         String jsonContent = """
                     {
                         "name": "New User",
-                        "email": "new.user@example.com"
+                        "email": "user@example.com"
                     }
                 """;
         mockMvc.perform(post("/petitions/sign/1")
